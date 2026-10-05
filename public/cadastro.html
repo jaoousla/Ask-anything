@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="casdatro.css">
+</head>
+<body>
+  <img src="images/zimages.jpg" alt="Imagem vought">
+
+  <form id="usuario" class="container">
+    <img src="images/zMinecraft_Verity_Logo.webp" alt="Imagem logo">
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+    
+    <button type="submit" id="btn-entrar">Se candidatar a vaga como tester</button>
+
+    <div id="mensagemCadastro" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+  </form>
+
+  <script>
+    const formUsuario = document.querySelector('#usuario');
+    const msgCadastro = document.querySelector('#mensagemCadastro');
+
+    const cadastroNome = document.querySelector('#nome');
+    const cadastroEmail = document.querySelector('#email');
+    const cadastroSenha = document.querySelector('#senha');
+
+    formUsuario.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const user = cadastroNome.value; 
+      const gmail = cadastroEmail.value;
+      const senha = cadastroSenha.value;
+
+      if (senha.length < 6) {
+        msgCadastro.innerText = 'A senha precisa ter no mínimo 6 caracteres';
+        msgCadastro.style.color = 'red';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/cadastro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome: user, email: gmail, senha: senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          msgCadastro.innerText = data.error;
+          msgCadastro.style.color = 'red';
+          return;
+        }
+
+        msgCadastro.innerText = 'Cadastro realizado! Redirecionando para o chat...';
+        msgCadastro.style.color = 'green';
+
+        // Redireciona diretamente para o chat após 1.5 segundos
+        setTimeout(() => {
+          window.location.href = 'chat.html';
+        }, 1500);
+
+      } catch (error) {
+        msgCadastro.innerText = 'Erro de conexão com o servidor.';
+        msgCadastro.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <form id="usuario" class="container">
+    <img src="images/zMinecraft_Verity_Logo.webp" alt="Imagem logo">
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+
+    <div class="link-box" style="margin-top: 15px; text-align: center;">
+      <span>Ainda não possui uma conta?</span><br>
+      <a href="cadastro.html" style="color: #005abb; font-weight: bold;">Crie sua conta agora mesmo</a>
+    </div>
+
+    <div class="botaolegal">
+      <button type="submit" id="btn-entrar">Fazer login</button>
+    </div>
+
+    <div id="mensagemLogin" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+  </form>
+
+  <script>
+    const formLogin = document.querySelector('#usuario');
+    const msgLogin = document.querySelector('#mensagemLogin');
+
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.querySelector('#email').value;
+      const senha = document.querySelector('#senha').value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          msgLogin.innerText = data.error;
+          msgLogin.style.color = 'red';
+          return;
+        }
+
+        msgLogin.innerText = 'Login efetuado! Entrando...';
+        msgLogin.style.color = 'green';
+
+        setTimeout(() => {
+          window.location.href = 'chat.html';
+        }, 1000);
+
+      } catch (err) {
+        msgLogin.innerText = 'Erro de conexão com o servidor.';
+        msgLogin.style.color = 'red';
+      }
+    });
+  </script>
+
+</body>
+</html>

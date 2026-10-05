@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrevista com Homelander</title>
+  <link rel="stylesheet" href="chat.css">
+  <style>
+    .message {
+      padding: 10px 15px;
+      border-radius: 8px;
+      max-width: 80%;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+    .user-msg {
+      background-color: #0084ff;
+      color: white;
+      align-self: flex-end;
+    }
+    .bot-msg {
+      background-color: #f0ff46;
+      color: #9e0b09;
+      font-weight: bold;
+      align-self: flex-start;
+      border-left: 4px solid #dc2626;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Converse comigo!!</h1>
+  </header>
+
+  <main class="chat-container" id="chatBox">
+    <div class="logo-container">
+      <img src="images/Vershitty.webp" alt="Logotipo">
+    </div>
+
+    <div class="welcome-message">
+      Ask me anything!, I know everything!
+    </div>
+  </main>
+
+  <footer class="input-container">
+    <input type="text" id="userInput" placeholder="Digite sua pergunta ..." />
+    <button type="button" id="btnSend">Enviar</button>
+  </footer>
+
+  <script>
+    const chatBox = document.querySelector('#chatBox');
+    const userInput = document.querySelector('#userInput');
+    const btnSend = document.querySelector('#btnSend');
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      // Adiciona mensagem do utilizador
+      appendMessage(text, 'user-msg');
+      userInput.value = '';
+
+      // Indicador de a carregar
+      const loadingDiv = appendMessage('Pensando...', 'bot-msg');
+
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          loadingDiv.textContent = data.reply;
+        } else {
+          loadingDiv.textContent = 'Erro ao processar a resposta.';
+        }
+      } catch (err) {
+        loadingDiv.textContent = 'Erro na comunicação com o servidor.';
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function appendMessage(text, className) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('message', className);
+      msgDiv.innerText = text;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return msgDiv;
+    }
+
+    btnSend.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+
+</body>
+</html>
