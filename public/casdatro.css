@@ -1,5 +1,8 @@
 body {
   background-image: url("images/noFilter.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   color: #006394;
   font-family: 'Arial Black', Impact, sans-serif;
   display: flex;
